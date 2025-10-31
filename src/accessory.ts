@@ -76,7 +76,7 @@ export class GpioDoorbellAccessory implements AccessoryPlugin {
 
   setupGpio(): void {
     this.button = new Rio(this.config.gpioPin, "in");
-    this.button.monitor("both", (event) => {this.handlePinChange(this.button, value); });
+    this.button.monitor("both", (event) => {this.handlePinChange(event); });
 
     if (this.config.enableOutput) {
       this.log.debug(`Enable output on pin ${this.config.outputGpioPin}`);
@@ -110,7 +110,7 @@ export class GpioDoorbellAccessory implements AccessoryPlugin {
       // handle throttle time
       const now = Date.now();
       if (this.lastRang && (this.lastRang + this.config.throttleTime) >= now) {
-        this.log.debug(`Ignoring state change on pin ${gpioPin} because throttle time has not expired.`);
+        this.log.debug(`Ignoring state change on pin because throttle time has not expired.`);
         return;
       } else {
         this.lastRang = Date.now();
