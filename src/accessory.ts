@@ -4,7 +4,7 @@ import {
   Logger,
 } from 'homebridge';
 import storage from 'node-persist';
-import GPIO from 'rpi-gpio';
+import {Rio} from 'rpi-io';
 import {AccessoryConfig} from 'homebridge/lib/bridgeService';
 import axios from 'axios';
 
@@ -24,6 +24,9 @@ export class GpioDoorbellAccessory implements AccessoryPlugin {
 
   private readonly doorbellMuteKey = 'homebridge-gpio-doorbell.mute';
   private doorbellMute: boolean;
+
+  private button;
+  private relay;
 
   constructor(
     public readonly log: Logger,
@@ -72,13 +75,14 @@ export class GpioDoorbellAccessory implements AccessoryPlugin {
   }
 
   setupGpio(): void {
-    GPIO.on('change', (channel, value) => this.handlePinChange(channel, value));
-    GPIO.setup(this.config.gpioPin, GPIO.DIR_IN, GPIO.EDGE_BOTH);
+    this.button = new Rio(this.config.gpioPin, "in");
+    this.button.monitor("both", (event) => {this.handlePinChange(this.button, value); });
 
     if (this.config.enableOutput) {
       this.log.debug(`Enable output on pin ${this.config.outputGpioPin}`);
 
-      GPIO.setup(this.config.outputGpioPin, GPIO.DIR_LOW);
+      this.relay = new Rio(this.config.outputGpioPin, "out");
+      this.relay.set(0);
     }
   }
 
@@ -87,10 +91,10 @@ export class GpioDoorbellAccessory implements AccessoryPlugin {
    * @param circuitOpen true when circuit is open, false if circuit is closed
    * @private
    */
-  private async handlePinChange(gpioPin: number, circuitOpen: boolean): Promise<void> {
-    this.log.debug(`Pin ${gpioPin} changed state to ${circuitOpen}.`);
+  private async handlePinChange(direction: string): Promise<void> {
+    this.log.debug(`Pin changed state to ${direction}.`);
 
-    let buttonPushed = !circuitOpen;
+    let buttonPushed = direction == "rising";
 
     if (this.config.negateInput) {
       buttonPushed = !buttonPushed;
@@ -99,8 +103,7 @@ export class GpioDoorbellAccessory implements AccessoryPlugin {
     // handle GPIO output
     if (this.config.enableOutput && !this.doorbellMute) {
       this.log.debug(`Setting GPIO pin ${this.config.outputGpioPin} to ${buttonPushed ? 'HIGH' : 'LOW'}`);
-
-      GPIO.write(this.config.outputGpioPin, buttonPushed);
+      this.relay.set(buttonPushed?1:0);
     }
 
     if (buttonPushed) {
@@ -148,7 +151,7 @@ export class GpioDoorbellAccessory implements AccessoryPlugin {
     this.storage.setItemSync(this.doorbellMuteKey, this.doorbellMute);
 
     if (!this.doorbellMute && this.config.enableOutput) {
-      GPIO.write(this.config.outputGpioPin, false);
+      this.relay.set(0);
     }
   }
 
