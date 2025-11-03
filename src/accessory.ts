@@ -65,6 +65,7 @@ export class GpioDoorbellAccessory implements AccessoryPlugin {
 
     // setup gpio
     this.setupGpio();
+    this.api.on('shutdown', () => { this.shutdownGpio(); });
   }
 
   getServices() {
@@ -74,6 +75,10 @@ export class GpioDoorbellAccessory implements AccessoryPlugin {
     ];
   }
 
+  shutdownGpio(): void {
+    Rio.stopMonitoring();
+  }
+  
   setupGpio(): void {
     this.button = new Rio(this.config.gpioPin, "in");
     this.button.monitor("both", (event, date) => {this.handlePinChange(event); });
