@@ -1,28 +1,28 @@
 {
   "name": "homebridge-gpio-doorbell",
   "displayName": "Homebridge GPIO Doorbell",
-  "version": "2.1.1",
+  "version": "3.0.0",
   "description": "Use GPIO input as HomeKit doorbell",
   "license": "Apache-2.0",
   "author": {
     "name": "Silvio Kennecke"
   },
-  "funding": [
+  "contributors": [
     {
-      "type": "paypal",
-      "url": "https://paypal.me/diginize"
+      "name": "nsayer",
+      "url": "https://github.com/nsayer"
     }
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/silviokennecke/homebridge-gpio-doorbell.git"
+    "url": "git://github.com/nsayer/homebridge-gpio-doorbell.git"
   },
   "bugs": {
-    "url": "https://github.com/silviokennecke/homebridge-gpio-doorbell/issues"
+    "url": "https://github.com/nsayer/homebridge-gpio-doorbell/issues"
   },
   "engines": {
-    "node": ">=14.18.1",
-    "homebridge": ">=1.3.5"
+    "node": ">=18.0.0",
+    "homebridge": ">=2.0.0"
   },
   "main": "dist/index.js",
   "scripts": {
