@@ -19,6 +19,17 @@
         "required": true,
         "placeholder": "e.g. 7 for GPIO 4"
       },
+      "bias": {
+        "title": "Input Bias",
+        "description": "Enable internal pull-up or pull-down resistor on the input pin (recommended for most doorbell buttons)",
+        "type": "string",
+        "required": false,
+        "enum": ["pull-up", "pull-down"],
+        "enumNames": [
+          "Pull-Up",
+          "Pull-Down"
+        ]
+      },
       "throttleTime": {
         "title": "Throttle time",
         "description": "How many milliseconds should another ring be ignored after the doorbell rang last?",
