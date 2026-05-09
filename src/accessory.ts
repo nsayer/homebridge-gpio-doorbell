@@ -85,7 +85,7 @@ export class GpioDoorbellAccessory implements AccessoryPlugin {
     if (this.config.bias) {
       inputOptions.bias = this.config.bias;
     }
-    this.button = new Rio(this.config.gpioPin, "in");
+    this.button = new Rio(this.config.gpioPin, "in", inputOptions);
     this.button.monitor("both", (event, date) => {this.handlePinChange(event); });
 
     if (this.config.enableOutput) {
