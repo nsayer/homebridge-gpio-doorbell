@@ -4,7 +4,7 @@ import {
   Logger,
 } from 'homebridge';
 import storage from 'node-persist';
-import {Rio} from 'rpi-io';
+import {RIO} from 'rpi-io';
 import {AccessoryConfig} from 'homebridge/lib/bridgeService';
 import axios from 'axios';
 
@@ -76,7 +76,7 @@ export class GpioDoorbellAccessory implements AccessoryPlugin {
   }
 
   shutdownGpio(): void {
-    Rio.stopMonitoring();
+    RIO.stopMonitoring();
   }
   
   setupGpio(): void {
@@ -85,13 +85,13 @@ export class GpioDoorbellAccessory implements AccessoryPlugin {
     if (this.config.bias) {
       inputOptions.bias = this.config.bias;
     }
-    this.button = new Rio(this.config.gpioPin, "in", inputOptions);
-    this.button.monitor("both", (event, date) => {this.handlePinChange(event); });
+    this.button = new RIO(this.config.gpioPin, "input", inputOptions);
+    this.button.monitoringStart((event) => {this.handlePinChange(event); }, "both");
 
     if (this.config.enableOutput) {
       this.log.debug(`Enable output on pin ${this.config.outputGpioPin}`);
 
-      this.relay = new Rio(this.config.outputGpioPin, "out");
+      this.relay = new RIO(this.config.outputGpioPin, "output");
       this.relay.set(0);
     }
   }
