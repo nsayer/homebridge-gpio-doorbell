@@ -65,7 +65,9 @@ export class GpioDoorbellAccessory implements AccessoryPlugin {
 
     // setup gpio
     this.setupGpio();
-    this.api.on('shutdown', () => { this.shutdownGpio(); });
+    this.api.on('shutdown', () => {
+      this.shutdownGpio();
+    });
   }
 
   getServices() {
@@ -78,20 +80,22 @@ export class GpioDoorbellAccessory implements AccessoryPlugin {
   shutdownGpio(): void {
     RIO.stopMonitoring();
   }
-  
+
   setupGpio(): void {
     const inputOptions: { bias?: string } = {};
 
     if (this.config.bias) {
       inputOptions.bias = this.config.bias;
     }
-    this.button = new RIO(this.config.gpioPin, "input", inputOptions);
-    this.button.monitoringStart((event) => {this.handlePinChange(event); }, "both");
+    this.button = new RIO(this.config.gpioPin, 'input', inputOptions);
+    this.button.monitoringStart((event) => {
+      this.handlePinChange(event);
+    }, 'both');
 
     if (this.config.enableOutput) {
       this.log.debug(`Enable output on pin ${this.config.outputGpioPin}`);
 
-      this.relay = new RIO(this.config.outputGpioPin, "output");
+      this.relay = new RIO(this.config.outputGpioPin, 'output');
       this.relay.set(0);
     }
   }
@@ -104,7 +108,7 @@ export class GpioDoorbellAccessory implements AccessoryPlugin {
   private async handlePinChange(direction: string): Promise<void> {
     this.log.debug(`Pin changed state to ${direction}.`);
 
-    let buttonPushed = direction == "rising";
+    let buttonPushed = direction === 'rising';
 
     if (this.config.negateInput) {
       buttonPushed = !buttonPushed;
@@ -120,7 +124,7 @@ export class GpioDoorbellAccessory implements AccessoryPlugin {
       // handle throttle time
       const now = Date.now();
       if (this.lastRang && (this.lastRang + this.config.throttleTime) >= now) {
-        this.log.debug(`Ignoring state change on pin because throttle time has not expired.`);
+        this.log.debug('Ignoring state change on pin because throttle time has not expired.');
         return;
       } else {
         this.lastRang = Date.now();
