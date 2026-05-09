@@ -80,7 +80,7 @@ export class GpioDoorbellAccessory implements AccessoryPlugin {
   }
   
   setupGpio(): void {
-    const inputOptions: any = {};
+    const inputOptions: { bias?: string } = {};
 
     if (this.config.bias) {
       inputOptions.bias = this.config.bias;
