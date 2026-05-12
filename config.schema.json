@@ -52,7 +52,7 @@
         "title": "Output GPIO pin",
         "description": "The GPIO pin that should be used for output, when the doorbell is ringing.",
         "type": "integer",
-        "required": true,
+        "required": false,
         "placeholder": "e.g. 7 for GPIO 4",
         "condition": {
           "functionBody": "return model.enableOutput === true;"
